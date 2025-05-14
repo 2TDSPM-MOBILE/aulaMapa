@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import RNPickerSelect from 'react-native-picker-select'
 
 //Importando a biblioteca de localização
 import * as Location from 'expo-location'
@@ -8,8 +9,15 @@ import * as Location from 'expo-location'
 //Importando o mapa e o pin vermelho do mapa
 import MapView, { Marker } from 'react-native-maps';
 
+const listaAlunos = [
+  {label:'Erick',value:'Erick'},
+  {label:'Luana',value:'Luana'},
+  {label:'Pedro',value:'Pedro Luiz'}
+]
 
 export default function App() {
+  const[alunoSelecionado,setAlunoSelecionado]=useState('')
+
   //Estado para armazenar a localização(latitude e longitude)
   const [location, setLocation] = useState(null)
 
@@ -84,11 +92,37 @@ export default function App() {
         <Text>Minha Latitude:{location.latitude}</Text>
         <Text>Minha Longitude:{location.longitude}</Text>
 
-        <MapView>
+        <MapView style={{width:'100%',height:400,marginTop:40}}
+          initialRegion={{
+            latitude:location.latitude,
+            longitude:location.longitude,
+            latitudeDelta:0.02,//Zoom na vertical
+            longitudeDelta:0.02//Zoom na horizontal
+          }}
+        >
           <Marker 
-          
+            coordinate={{
+              latitude:location.latitude,
+              longitude:location.longitude
+            }}
+          />
+
+           <Marker 
+            coordinate={{
+              latitude:-23.564386,
+              longitude:-46.652671
+            }}
+            title='Vc está aqui'
           />
         </MapView>
+        {renderAddress()}
+        <RNPickerSelect
+          items={listaAlunos}
+          onValueChange={(value)=>setAlunoSelecionado(value)}
+          placeholder={{label:'Escolha um aluno',value:null}}
+        />
+        {alunoSelecionado?<Text>Aluno Selecionado:{alunoSelecionado}</Text>:null}
+        
       </>
      ):(
       <Text>Carregando endereço...</Text>
